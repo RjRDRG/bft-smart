@@ -71,6 +71,7 @@ public class NettyClientServerCommunicationSystemServerSide extends SimpleChanne
     private ServerViewController controller;
     private boolean closed = false;
     private Channel mainChannel;
+    private boolean useSignatures = false;
 
     // This locked seems to introduce a bottleneck and seems useless, but I cannot recall why I added it
     //private ReentrantLock sendLock = new ReentrantLock();
@@ -146,7 +147,10 @@ public class NettyClientServerCommunicationSystemServerSide extends SimpleChanne
 			logger.info("requestTimeout = " + controller.getStaticConf().getRequestTimeout());
 			logger.info("maxBatch = " + controller.getStaticConf().getMaxBatchSize());
 			if (controller.getStaticConf().getUseMACs() == 1) logger.info("Using MACs");
-			if(controller.getStaticConf().getUseSignatures() == 1) logger.info("Using Signatures");
+			if(controller.getStaticConf().getUseSignatures() == 1) {
+				logger.info("Using Signatures");
+				useSignatures = true;
+			}
                         logger.info("Binded replica to IP address " + myAddress);
                         //******* EDUARDO END **************//
                         
@@ -280,15 +284,12 @@ public class NettyClientServerCommunicationSystemServerSide extends SimpleChanne
 			logger.error("Failed to serialize message.", ex);
 		}
 
-		//replies are not signed in the current JBP version
-		//sm.signed = false;
-		//produce signature if necessary (never in the current version)
-		System.out.println("--> signed:" + sm.signed);
-		if (sm.signed) {
+		if (useSignatures) {
 			//******* EDUARDO BEGIN **************//
 			byte[] data2 = TOMUtil.signMessage(controller.getStaticConf().getPrivateKey(), data);
 			//******* EDUARDO END **************//
 			sm.serializedMessageSignature = data2;
+			sm.signed = true;
 		}
 
 		for (int i = 0; i < targets.length; i++) {

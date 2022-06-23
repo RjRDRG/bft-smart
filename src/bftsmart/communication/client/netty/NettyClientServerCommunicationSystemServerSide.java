@@ -281,7 +281,7 @@ public class NettyClientServerCommunicationSystemServerSide extends SimpleChanne
 		}
 
 		//replies are not signed in the current JBP version
-		sm.signed = false;
+		//sm.signed = false;
 		//produce signature if necessary (never in the current version)
 		if (sm.signed) {
 			//******* EDUARDO BEGIN **************//

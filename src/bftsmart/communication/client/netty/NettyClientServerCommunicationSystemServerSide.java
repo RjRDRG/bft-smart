@@ -283,6 +283,7 @@ public class NettyClientServerCommunicationSystemServerSide extends SimpleChanne
 		//replies are not signed in the current JBP version
 		//sm.signed = false;
 		//produce signature if necessary (never in the current version)
+		System.out.println("--> signed:" + sm.signed);
 		if (sm.signed) {
 			//******* EDUARDO BEGIN **************//
 			byte[] data2 = TOMUtil.signMessage(controller.getStaticConf().getPrivateKey(), data);
